@@ -2,7 +2,7 @@ import time
 
 ls = []
 n = 2
-order = 2**22#計算上限数
+order = 2**10#計算上限数
 last = order*(order+1)//2 - 1
 sumn = 0
 start = time.time()
@@ -52,20 +52,29 @@ def tasktime():
     return strpar+"%" + " " + timestr(timex)
 
 def pture(n):
-    for i in range(len(ls)):
-        if (n)%ls[i]==0:
-            return False
-        elif ls[i]**2>n:
-            break
-    return True
+    n = int(n//1)
+    if n < 3:
+        return [2]
+    
+    pls = pture(n**0.5//1)
 
-for i in range(order-1):
-    if pture(n):
-        ls.append(n)
-    sumn += n
-    n+=1
-    if lastprint+1 < time.time():
-        print(tasktime())
-        lastprint = time.time()
+    ls = [0]
+    tls = ["x"]
+    for i in range(n):
+        ls.append(i+1)
+        tls.append("o")
+    
+    for i in pls:
+        for j in range(n//i):
+            tls[(j+1)*i] = "x"
+    
+    outls = []
+    for i in range(n+1):
+        if tls[i] == "o":
+            outls.append(i)
+    return outls
+    
 
-print(ls[-1]," ",timestr(time.time()-start))
+pnum = pture(order)
+
+print(pnum[-1]," ",timestr(time.time()-start))
