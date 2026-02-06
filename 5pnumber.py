@@ -2,7 +2,7 @@ import os
 import time
 import math
 
-order = 2**20#計算数
+order = 2**19#計算数
 allstart = time.time()
 lastprint = time.time()
 
