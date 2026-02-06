@@ -2,7 +2,7 @@ import time
 
 ls = []
 n = 2
-order = 2**29#計算上限数
+order = 2**28#計算上限数
 start = time.time()
 
 def timestr(t):
@@ -35,29 +35,21 @@ def timestr(t):
         outstr += twostr + strls[i]
     return outstr
 
-def pture(n):
-    n = int(n)
+def sieve(n):
     if n < 2:
         return []
-    
-    pls = pture(int(n**0.5))
 
-    # 0と1は素数ではないので "x"、2以降を "o" で初期化
-    tls = ["x", "x"] + ["o"] * (n - 1)
-    
-    for i in pls:
-        # i自身(1*i)を消さないように j=1 (つまり2*i) から開始
-        for j in range(1, n//i):
-            tls[(j+1)*i] = "x"
-    
-    outls = []
-    for i in range(n+1):
-        if tls[i] == "o":
-            outls.append(i)
+    size = (n - 1) // 2
+    is_prime = bytearray(b"\x01") * size
 
-    return outls
-    
+    for i in range(int(n**0.5)//2 + 1):
+        if is_prime[i]:
+            p = 2*i + 3
+            start = (p*p - 3)//2
+            is_prime[start::p] = b"\x00" * ((size-start-1)//p + 1)
 
-pnum = pture(order)
+    return [2] + [2*i+3 for i,v in enumerate(is_prime) if v]
+
+pnum = sieve(order)
 
 print(pnum[-1]," ",timestr(time.time()-start))
