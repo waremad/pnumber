@@ -2,7 +2,7 @@ import os
 import time
 import math
 
-order = 2**26#計算数
+order = 2**22#計算数
 allstart = time.time()
 lastprint = time.time()
 
@@ -63,9 +63,15 @@ def add_next_prime_fast(filename="p.txt"):
 
     if not primes:
         next_prime = 2
+    elif len(primes) == 1:
+        next_prime = 3
+    elif len(primes) == 2:
+        next_prime = 5
     else:
         last = primes[-1]
-        candidate = last + 2 if last % 2 == 1 else last + 1
+        candidate = last + 2
+        while candidate % 3 == 0:
+            candidate += 2
 
         while True:
             limit = math.isqrt(candidate)
@@ -82,7 +88,10 @@ def add_next_prime_fast(filename="p.txt"):
                 next_prime = candidate
                 break
 
-            candidate += 2
+            if candidate % 6 == 1:
+                candidate += 4
+            else:
+                candidate += 2
 
     # キャッシュに追加
     primes.append(next_prime)
@@ -95,8 +104,9 @@ def add_next_prime_fast(filename="p.txt"):
 for i in range(order):
     start = time.time()
     new_p, count = add_next_prime_fast("p.txt")
-    if lastprint+1 < time.time():
-        print(f"No.{count}   Added: {new_p}","  Time:",timestr(time.time()-start)," ",tasktime(i+1,order))
+    now = time.time()
+    if lastprint+1 < now:
+        print(f"No.{count}   Added: {new_p}","  Time:",timestr(now-start)," ",tasktime(i+1,order))
         lastprint = time.time()
 
 print(time.time()-allstart)
