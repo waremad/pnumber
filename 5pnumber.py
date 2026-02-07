@@ -2,7 +2,7 @@ import os
 import time
 import math
 
-order = 2**19#計算数
+order = 2**26#計算数
 allstart = time.time()
 lastprint = time.time()
 
@@ -50,12 +50,16 @@ def tasktime(sumn,last):
     return "Done: "+strpar+"%" + "   Tasktime: " + timestr(timex)
 
 def add_next_prime_fast(filename="p.txt"):
-    primes = []
+    # 素数リストをキャッシュとして保持（初回のみファイル読み込み）
+    if not hasattr(add_next_prime_fast, "primes"):
+        add_next_prime_fast.primes = []
+        if os.path.exists(filename):
+            with open(filename, "r") as f:
+                content = f.read()
+                if content:
+                    add_next_prime_fast.primes = [int(x) for x in content.split()]
 
-    if os.path.exists(filename):
-        with open(filename, "r") as f:
-            for x in f.read().split():
-                primes.append(int(x))
+    primes = add_next_prime_fast.primes
 
     if not primes:
         next_prime = 2
@@ -80,10 +84,13 @@ def add_next_prime_fast(filename="p.txt"):
 
             candidate += 2
 
+    # キャッシュに追加
+    primes.append(next_prime)
+
     with open(filename, "a") as f:
         f.write(f"{next_prime}\n")
 
-    return next_prime, len(primes) + 1
+    return next_prime, len(primes)
 
 for i in range(order):
     start = time.time()
